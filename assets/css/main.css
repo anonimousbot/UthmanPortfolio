@@ -2207,6 +2207,11 @@ section,
   color: color-mix(in srgb, var(--default-color), transparent 50%);
 }
 
+.contact .contact-form .form-select option {
+  color: #111111;
+  background-color: #ffffff;
+}
+
 .contact .contact-form .btn {
   background-color: var(--accent-color);
   color: var(--contrast-color);
