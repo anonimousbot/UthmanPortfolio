@@ -3316,6 +3316,16 @@ body.index-page.motion-home {
   box-shadow: none;
 }
 
+.motion-home .brief-form .form-select {
+  background-color: #ffffff;
+  color: #111111;
+}
+
+.motion-home .brief-form .form-select option {
+  background-color: #ffffff;
+  color: #111111;
+}
+
 .motion-home .brief-form .form-control::placeholder {
   color: rgba(216, 222, 240, 0.36);
 }
@@ -3323,8 +3333,17 @@ body.index-page.motion-home {
 .motion-home .brief-form .form-control:focus,
 .motion-home .brief-form .form-select:focus {
   border-color: rgba(138, 168, 255, 0.5);
-  background: rgba(255, 255, 255, 0.04);
   box-shadow: 0 0 0 0.24rem rgba(138, 168, 255, 0.12);
+}
+
+.motion-home .brief-form .form-control:focus {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--heading-color);
+}
+
+.motion-home .brief-form .form-select:focus {
+  background: #ffffff;
+  color: #111111;
 }
 
 .motion-home .scope-options {

@@ -272,21 +272,41 @@
 
     const contactForm = document.getElementById('contactForm');
     const formStatus = document.getElementById('formStatus');
+    const formSubject = document.getElementById('formSubject');
+    const formNext = document.getElementById('formNext');
+    const projectScopeSummary = document.getElementById('projectScopeSummary');
 
     if (contactForm && formStatus) {
-      contactForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
+      const successUrl = `${window.location.origin}${window.location.pathname}?sent=1#contact`;
+      const errorUrl = `${window.location.origin}${window.location.pathname}?error=1#contact`;
+      const params = new URLSearchParams(window.location.search);
 
+      if (formNext) {
+        formNext.value = successUrl;
+      }
+
+      if (params.get('sent') === '1') {
+        formStatus.className = 'form-status success';
+        formStatus.textContent = 'Your brief has been sent successfully. I will get back to you soon.';
+      } else if (params.get('error') === '1') {
+        formStatus.className = 'form-status error';
+        formStatus.textContent = 'Something went wrong while sending the brief. Please try again or email buthman111@gmail.com directly.';
+      }
+
+      contactForm.addEventListener('submit', function() {
         const submitBtn = contactForm.querySelector('button[type="submit"]');
         const originalText = submitBtn ? submitBtn.innerHTML : '';
         const selectedScopes = Array.from(contactForm.querySelectorAll('input[name="project_scope[]"]:checked')).map((item) => item.value);
-        const formData = new FormData(contactForm);
 
-        formData.delete('project_scope[]');
-        formData.append('project_scope', selectedScopes.length ? selectedScopes.join(', ') : 'Not specified');
-        formData.append('_subject', `Portfolio Inquiry: ${formData.get('subject')}`);
-        formData.append('_template', 'table');
-        formData.append('_captcha', 'false');
+        if (projectScopeSummary) {
+          projectScopeSummary.value = selectedScopes.length ? selectedScopes.join(', ') : 'Not specified';
+        }
+
+        const subjectField = contactForm.querySelector('#subject');
+        if (formSubject) {
+          const subjectValue = subjectField && subjectField.value ? subjectField.value : 'New Project Brief';
+          formSubject.value = `Portfolio Inquiry: ${subjectValue}`;
+        }
 
         if (submitBtn) {
           submitBtn.disabled = true;
@@ -295,32 +315,19 @@
 
         formStatus.className = 'form-status loading';
         formStatus.textContent = 'Sending your project brief...';
-
-        try {
-          const response = await fetch('https://formsubmit.co/ajax/buthman111@gmail.com', {
-            method: 'POST',
-            body: formData,
-            headers: {
-              Accept: 'application/json'
-            }
-          });
-
-          if (!response.ok) {
-            throw new Error('Form submission failed.');
-          }
-
-          formStatus.className = 'form-status success';
-          formStatus.textContent = 'Your brief has been sent successfully. If this is the first submission, check your email once to activate FormSubmit.';
-          contactForm.reset();
-        } catch (error) {
-          formStatus.className = 'form-status error';
-          formStatus.textContent = 'Something went wrong while sending the brief. If FormSubmit has not been activated yet, check your email for the activation message or email buthman111@gmail.com directly.';
-        } finally {
-          if (submitBtn) {
+        window.setTimeout(() => {
+          if (!document.hidden && submitBtn) {
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
+            if (window.location.href !== successUrl) {
+              formStatus.className = 'form-status error';
+              formStatus.textContent = 'Submission looks stuck. Please try again or email buthman111@gmail.com directly.';
+              if (formNext) {
+                formNext.value = errorUrl;
+              }
+            }
           }
-        }
+        }, 15000);
       });
     }
   }
